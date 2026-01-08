@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/farciniegas52/plataforma-transversal-kubernetes.git'
     targetRevision: HEAD
-    path: clusters/eks-prod # <--- ¡IMPORTANTE! Le dice que vigile esta carpeta
+    path: clusters/eks-cluster # <--- ¡IMPORTANTE! Le dice que vigile esta carpeta
   destination:
     server: 'https://kubernetes.default.svc'
   syncPolicy:
