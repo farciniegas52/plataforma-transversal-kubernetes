@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Le dice a Kustomize qué archivos incluir
+resources:
+  - ns-list.yaml
+
+# Todos los objetos aquí tendrán estas etiquetas
+commonLabels:
+  owner: plataforma-team
+  managed-by: argocd
