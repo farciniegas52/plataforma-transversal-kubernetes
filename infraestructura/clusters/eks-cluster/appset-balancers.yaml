@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: orquestador-balancers
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: lb-publico    # Instancia 1
+            replicas: 3
+            type: internet-facing
+          - name: lb-interno    # Instancia 2
+            replicas: 1
+            type: internal
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/farciniegas52/plataforma-transversal-kubernetes.git'
+        targetRevision: HEAD
+        path: componentes/aws-load-balancer # Usa el molde
+        helm:
+          parameters:
+            - name: "replicaCount"
+              value: '{{replicas}}'
+            - name: "controller.type"
+              value: '{{type}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'ingress-{{name}}' # Crea un namespace por cada balanceador
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

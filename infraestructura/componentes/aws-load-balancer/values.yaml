@@ -1,0 +1,3 @@
+replicaCount: 1
+clusterName: my-eks-cluster
+ingressClass: nginx
