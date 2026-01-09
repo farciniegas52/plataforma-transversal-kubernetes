@@ -6,33 +6,20 @@ metadata:
 spec:
   project: default
   
-  source:
-    repoURL: https://aws.github.io/eks-charts
-    chart: aws-load-balancer-controller
-    targetRevision: 1.6.2
+  sources:
+    # Source 1: Helm chart oficial de AWS
+    - repoURL: https://aws.github.io/eks-charts
+      chart: aws-load-balancer-controller
+      targetRevision: 1.6.2
+      helm:
+        releaseName: aws-load-balancer-controller
+        valueFiles:
+          - $values/componentes/aws-load-balancer-controller/values.yaml
     
-    helm:
-      releaseName: aws-load-balancer-controller
-      values: |
-        clusterName: pragma-eks-platform-dev-eks-main
-        vpcId: vpc-0d883b03c11d85fb4
-        
-        serviceAccount:
-          create: true
-          annotations:
-            eks.amazonaws.com/role-arn: arn:aws:iam::034034141479:role/pragma-eks-platform-dev-role-eks-aws-lb-controller
-        
-        replicaCount: 2
-        
-        resources:
-          limits:
-            cpu: 200m
-            memory: 500Mi
-          requests:
-            cpu: 100m
-            memory: 200Mi
-        
-        region: us-east-1
+    # Source 2: Repositorio Git con los values
+    - repoURL: https://github.com/felipearciniegas/plataforma-transversal-kubernetes.git
+      targetRevision: main
+      ref: values
   
   destination:
     server: 'https://kubernetes.default.svc'

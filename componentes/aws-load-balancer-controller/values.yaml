@@ -1,6 +1,12 @@
 # Nombre del cluster EKS
 clusterName: pragma-eks-platform-dev-eks-main
 
+# VPC ID del cluster
+vpcId: vpc-0d883b03c11d85fb4
+
+# Región de AWS
+region: us-east-1
+
 serviceAccount:
   create: true
   annotations:
