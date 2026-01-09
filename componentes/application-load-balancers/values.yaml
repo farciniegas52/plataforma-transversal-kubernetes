@@ -1,0 +1,73 @@
+# Configuración global
+global:
+  clusterName: pragma-eks-platform-dev
+  environment: dev
+  namespace: default
+
+# Lista de Application Load Balancers a crear
+loadBalancers:
+  # ALB Público - Internet Facing
+  - name: public
+    enabled: true
+    scheme: internet-facing
+    groupName: public
+    groupOrder: 1
+    replicas: 2
+    htmlTitle: "🌐 Balanceador Público"
+    htmlDescription: "Application Load Balancer - Internet Facing"
+    htmlGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+    loadBalancerName: pragma-eks-platform-dev-alb-public
+    targetType: ip
+    healthcheck:
+      path: /
+      intervalSeconds: 15
+      timeoutSeconds: 5
+      healthyThresholdCount: 2
+      unhealthyThresholdCount: 2
+    tags:
+      Environment: dev
+      Project: pragma-eks-platform
+      ManagedBy: argocd
+      Type: public
+    
+  # ALB Interno - Internal
+  - name: internal
+    enabled: true
+    scheme: internal
+    groupName: internal
+    groupOrder: 1
+    replicas: 2
+    htmlTitle: "🔒 Balanceador Interno"
+    htmlDescription: "Application Load Balancer - Internal"
+    htmlGradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+    loadBalancerName: pragma-eks-platform-dev-alb-internal
+    targetType: ip
+    healthcheck:
+      path: /
+      intervalSeconds: 15
+      timeoutSeconds: 5
+      healthyThresholdCount: 2
+      unhealthyThresholdCount: 2
+    tags:
+      Environment: dev
+      Project: pragma-eks-platform
+      ManagedBy: argocd
+      Type: internal
+
+# Configuración común de Ingress
+ingress:
+  ingressClassName: alb
+
+# Configuración de los pods dummy
+dummy:
+  image:
+    repository: nginx
+    tag: alpine
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi

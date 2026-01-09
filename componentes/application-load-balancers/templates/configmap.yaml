@@ -1,0 +1,52 @@
+{{- range .Values.loadBalancers }}
+{{- if .enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}-lb-html
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "load-balancers.labels" $ | nindent 4 }}
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{{ .htmlTitle }}</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background: {{ .htmlGradient }};
+                color: white;
+            }
+            .container {
+                text-align: center;
+                padding: 40px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                backdrop-filter: blur(10px);
+            }
+            h1 { font-size: 3em; margin: 0; }
+            p { font-size: 1.2em; margin-top: 20px; }
+            .info { margin-top: 30px; font-size: 0.9em; opacity: 0.8; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>{{ .htmlTitle }}</h1>
+            <p>{{ .htmlDescription }}</p>
+            <div class="info">
+                <p>IngressGroup: <strong>{{ .groupName }}</strong></p>
+                <p>Este ALB es compartido por todas las aplicaciones del grupo</p>
+            </div>
+        </div>
+    </body>
+    </html>
+{{- end }}
+{{- end }}

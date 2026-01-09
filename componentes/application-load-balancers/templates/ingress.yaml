@@ -1,0 +1,46 @@
+{{- range .Values.loadBalancers }}
+{{- if .enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .name }}-lb-ingress
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "load-balancers.labels" $ | nindent 4 }}
+    app.kubernetes.io/name: {{ .name }}-lb-dummy
+  annotations:
+    # IngressGroup - Permite compartir este ALB con otras aplicaciones
+    alb.ingress.kubernetes.io/group.name: {{ .groupName }}
+    alb.ingress.kubernetes.io/group.order: "{{ .groupOrder }}"
+    
+    # Configuración del ALB
+    alb.ingress.kubernetes.io/scheme: {{ .scheme }}
+    alb.ingress.kubernetes.io/target-type: {{ .targetType }}
+    alb.ingress.kubernetes.io/load-balancer-name: {{ .loadBalancerName }}
+    
+    # Health check
+    alb.ingress.kubernetes.io/healthcheck-path: {{ .healthcheck.path }}
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "{{ .healthcheck.intervalSeconds }}"
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "{{ .healthcheck.timeoutSeconds }}"
+    alb.ingress.kubernetes.io/healthy-threshold-count: "{{ .healthcheck.healthyThresholdCount }}"
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "{{ .healthcheck.unhealthyThresholdCount }}"
+    
+    # Tags
+    {{- if .tags }}
+    alb.ingress.kubernetes.io/tags: {{ range $key, $value := .tags }}{{ $key }}={{ $value }},{{ end }}
+    {{- end }}
+spec:
+  ingressClassName: {{ $.Values.ingress.ingressClassName }}
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .name }}-lb-dummy
+            port:
+              number: 80
+{{- end }}
+{{- end }}

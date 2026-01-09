@@ -1,0 +1,30 @@
+# Para habilitar este chart, renombra este archivo a: app-network-load-balancers.yaml
+# (quita el .disabled del final)
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: network-load-balancers
+  namespace: argocd
+spec:
+  project: default
+  
+  source:
+    repoURL: https://github.com/farciniegas52/plataforma-transversal-kubernetes.git
+    targetRevision: main
+    path: componentes/network-load-balancers
+    helm:
+      releaseName: network-load-balancers
+      valueFiles:
+        - values.yaml
+  
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

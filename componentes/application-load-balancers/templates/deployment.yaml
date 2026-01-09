@@ -1,0 +1,39 @@
+{{- range .Values.loadBalancers }}
+{{- if .enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}-lb-dummy
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "load-balancers.labels" $ | nindent 4 }}
+    app.kubernetes.io/name: {{ .name }}-lb-dummy
+spec:
+  replicas: {{ .replicas }}
+  selector:
+    matchLabels:
+      {{- include "load-balancers.selectorLabels" (dict "name" .name "Release" $.Release) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "load-balancers.selectorLabels" (dict "name" .name "Release" $.Release) | nindent 8 }}
+    spec:
+      containers:
+      - name: nginx
+        image: {{ $.Values.dummy.image.repository }}:{{ $.Values.dummy.image.tag }}
+        imagePullPolicy: {{ $.Values.dummy.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          {{- toYaml $.Values.dummy.resources | nindent 10 }}
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: {{ .name }}-lb-html
+{{- end }}
+{{- end }}

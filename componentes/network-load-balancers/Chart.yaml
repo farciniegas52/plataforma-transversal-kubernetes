@@ -1,0 +1,14 @@
+apiVersion: v2
+name: network-load-balancers
+description: Helm chart para crear Network Load Balancers (NLB) en AWS
+type: application
+version: 1.0.0
+appVersion: "1.0"
+keywords:
+  - nlb
+  - network-load-balancer
+  - tcp
+  - udp
+  - aws
+maintainers:
+  - name: CloudOps Team

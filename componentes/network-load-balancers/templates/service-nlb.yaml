@@ -1,0 +1,51 @@
+{{- range .Values.loadBalancers }}
+{{- if .enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "network-load-balancers.labels" $ | nindent 4 }}
+    app.kubernetes.io/name: {{ .name }}-nlb-dummy
+  annotations:
+    # Configuración del NLB
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: {{ .targetType }}
+    service.beta.kubernetes.io/aws-load-balancer-scheme: {{ .scheme }}
+    service.beta.kubernetes.io/aws-load-balancer-name: {{ .loadBalancerName }}
+    
+    # Cross-zone load balancing
+    {{- if .crossZoneLoadBalancing }}
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    {{- end }}
+    
+    # Health check
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: {{ .healthcheck.protocol }}
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "{{ .healthcheck.port }}"
+    {{- if eq .healthcheck.protocol "HTTP" "HTTPS" }}
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: {{ .healthcheck.path }}
+    {{- end }}
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "{{ .healthcheck.intervalSeconds }}"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "{{ .healthcheck.healthyThresholdCount }}"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "{{ .healthcheck.unhealthyThresholdCount }}"
+    
+    # Tags
+    {{- if .tags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ range $key, $value := .tags }}{{ $key }}={{ $value }},{{ end }}
+    {{- end }}
+spec:
+  type: LoadBalancer
+  loadBalancerClass: service.k8s.aws/nlb
+  selector:
+    {{- include "network-load-balancers.selectorLabels" (dict "name" .name "Release" $.Release) | nindent 4 }}
+  ports:
+  {{- range .ports }}
+  - name: {{ .name }}
+    port: {{ .port }}
+    targetPort: {{ .targetPort }}
+    protocol: {{ .protocol }}
+  {{- end }}
+{{- end }}
+{{- end }}

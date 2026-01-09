@@ -1,0 +1,82 @@
+# Configuración global
+global:
+  clusterName: pragma-eks-platform-dev
+  environment: dev
+  namespace: default
+
+# Lista de Network Load Balancers a crear
+loadBalancers:
+  # NLB Público - Internet Facing
+  - name: public-nlb
+    enabled: false  # Deshabilitado por defecto
+    scheme: internet-facing
+    replicas: 2
+    htmlTitle: "⚡ Balanceador Público NLB"
+    htmlDescription: "Network Load Balancer - Internet Facing - Layer 4"
+    htmlGradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+    loadBalancerName: pragma-eks-platform-dev-nlb-public
+    targetType: ip  # ip o instance
+    crossZoneLoadBalancing: true
+    healthcheck:
+      protocol: HTTP  # HTTP, HTTPS, TCP
+      port: 80
+      path: /
+      intervalSeconds: 30
+      healthyThresholdCount: 3
+      unhealthyThresholdCount: 3
+    # Puertos a exponer
+    ports:
+      - name: http
+        port: 80
+        targetPort: 80
+        protocol: TCP
+    tags:
+      Environment: dev
+      Project: pragma-eks-platform
+      ManagedBy: argocd
+      Type: public
+      LoadBalancerType: nlb
+    
+  # NLB Interno - Internal
+  - name: internal-nlb
+    enabled: false
+    scheme: internal
+    replicas: 2
+    htmlTitle: "🔒 Balanceador Interno NLB"
+    htmlDescription: "Network Load Balancer - Internal - Layer 4"
+    htmlGradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+    loadBalancerName: pragma-eks-platform-dev-nlb-internal
+    targetType: ip
+    crossZoneLoadBalancing: true
+    healthcheck:
+      protocol: HTTP
+      port: 80
+      path: /
+      intervalSeconds: 30
+      healthyThresholdCount: 3
+      unhealthyThresholdCount: 3
+    ports:
+      - name: http
+        port: 80
+        targetPort: 80
+        protocol: TCP
+    tags:
+      Environment: dev
+      Project: pragma-eks-platform
+      ManagedBy: argocd
+      Type: internal
+      LoadBalancerType: nlb
+
+# Configuración de los pods dummy
+dummy:
+  image:
+    repository: nginx
+    tag: alpine
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
