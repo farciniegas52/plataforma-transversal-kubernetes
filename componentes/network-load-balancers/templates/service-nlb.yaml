@@ -31,6 +31,16 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "{{ .healthcheck.healthyThresholdCount }}"
     service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "{{ .healthcheck.unhealthyThresholdCount }}"
     
+    # Subnets (control explícito)
+    {{- if .subnets }}
+    service.beta.kubernetes.io/aws-load-balancer-subnets: {{ .subnets }}
+    {{- end }}
+    
+    # Security Groups (control explícito)
+    {{- if .securityGroups }}
+    service.beta.kubernetes.io/aws-load-balancer-security-groups: {{ .securityGroups }}
+    {{- end }}
+    
     # Tags
     {{- if .tags }}
     service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ range $key, $value := .tags }}{{ $key }}={{ $value }},{{ end }}

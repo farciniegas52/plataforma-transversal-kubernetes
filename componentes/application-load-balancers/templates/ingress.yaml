@@ -26,6 +26,16 @@ metadata:
     alb.ingress.kubernetes.io/healthy-threshold-count: "{{ .healthcheck.healthyThresholdCount }}"
     alb.ingress.kubernetes.io/unhealthy-threshold-count: "{{ .healthcheck.unhealthyThresholdCount }}"
     
+    # Subnets (control explícito)
+    {{- if .subnets }}
+    alb.ingress.kubernetes.io/subnets: {{ .subnets }}
+    {{- end }}
+    
+    # Security Groups (control explícito)
+    {{- if .securityGroups }}
+    alb.ingress.kubernetes.io/security-groups: {{ .securityGroups }}
+    {{- end }}
+    
     # Tags
     {{- if .tags }}
     alb.ingress.kubernetes.io/tags: {{ range $key, $value := .tags }}{{ $key }}={{ $value }},{{ end }}

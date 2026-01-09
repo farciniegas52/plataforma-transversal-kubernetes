@@ -17,3 +17,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: shared-test
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shared-sebas
