@@ -15,6 +15,7 @@ spec:
       releaseName: aws-load-balancer-controller
       values: |
         clusterName: pragma-eks-platform-dev-eks-main
+        vpcId: vpc-0d883b03c11d85fb4
         
         serviceAccount:
           create: true
