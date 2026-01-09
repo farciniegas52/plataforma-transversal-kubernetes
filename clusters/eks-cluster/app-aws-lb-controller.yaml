@@ -17,7 +17,7 @@ spec:
           - $values/componentes/aws-load-balancer-controller/values.yaml
     
     # Source 2: Repositorio Git con los values
-    - repoURL: https://github.com/felipearciniegas/plataforma-transversal-kubernetes.git
+    - repoURL: https://github.com/farciniegas52/plataforma-transversal-kubernetes.git
       targetRevision: main
       ref: values
   
