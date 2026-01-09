@@ -1,14 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: root-application # El nombre del Capitán
+  name: root-application
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io  # Pilas elimina todo
 spec:
   project: default
   source:
     repoURL: 'https://github.com/farciniegas52/plataforma-transversal-kubernetes.git'
     targetRevision: HEAD
-    path: clusters/eks-cluster # <--- ¡IMPORTANTE! Le dice que vigile esta carpeta
+    path: clusters/eks-cluster
   destination:
     server: 'https://kubernetes.default.svc'
   syncPolicy:
