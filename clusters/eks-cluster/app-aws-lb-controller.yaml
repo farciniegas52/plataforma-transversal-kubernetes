@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-load-balancer-controller
+  namespace: argocd
+spec:
+  project: default
+  
+  source:
+    repoURL: https://aws.github.io/eks-charts
+    chart: aws-load-balancer-controller
+    targetRevision: 1.6.2
+    
+    helm:
+      valueFiles:
+        - $values/componentes/aws-load-balancer-controller/values.yaml
+  
+  sources:
+    - repoURL: 'https://github.com/farciniegas52/plataforma-transversal-kubernetes.git'
+      targetRevision: HEAD
+      ref: values
+  
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

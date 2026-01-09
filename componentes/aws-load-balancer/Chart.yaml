@@ -1,4 +1,0 @@
-apiVersion: v2
-name: aws-load-balancer-base
-version: 1.0.0
-description: Molde base para controladores de balanceadores

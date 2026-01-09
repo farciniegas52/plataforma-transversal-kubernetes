@@ -1,0 +1,19 @@
+# Nombre del cluster EKS
+clusterName: pragma-eks-platform-dev-eks-main
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::034034141479:role/pragma-eks-platform-dev-role-eks-aws-lb-controller                                
+
+# Réplicas
+replicaCount: 2
+
+# Recursos
+resources:
+  limits:
+    cpu: 200m
+    memory: 500Mi
+  requests:
+    cpu: 100m
+    memory: 200Mi
